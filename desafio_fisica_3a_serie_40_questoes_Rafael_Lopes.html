@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Desafio de Física — 3ª série do Ensino Médio</title>
+<style>
+:root{--bg:#0b1220;--panel:#111c30;--panel2:#17243a;--text:#eef4ff;--muted:#b6c4d9;--accent:#69d3b0;--accent2:#7db6ff;--warn:#ffd166;--bad:#ff8c8c;--line:#2b3b54}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(140deg,#08111f,#14213a);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+.wrap{max-width:980px;margin:auto;padding:20px}.hero{padding:26px 22px;border:1px solid var(--line);border-radius:22px;background:linear-gradient(135deg,#172943,#101a2c);margin-bottom:18px}
+.kicker{color:var(--accent);font-weight:800;letter-spacing:.12em;text-transform:uppercase;font-size:.78rem}.hero h1{font-size:clamp(1.7rem,4vw,2.6rem);line-height:1.1;margin:.5rem 0}.hero p{color:var(--muted);margin:.5rem 0 0}.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px;margin:16px 0}
+label{display:block;font-weight:700;margin:10px 0 5px}input,select{width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:#0b1424;color:var(--text);font:inherit}
+button{border:0;border-radius:11px;padding:12px 17px;font:inherit;font-weight:800;cursor:pointer;background:var(--accent);color:#082018}button.secondary{background:#263852;color:var(--text);border:1px solid #3b506e}button.warn{background:var(--warn);color:#302300}button:disabled{opacity:.45;cursor:not-allowed}.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.row>*{flex:1}.hidden{display:none!important}.progress{height:8px;background:#26364e;border-radius:20px;overflow:hidden;margin:12px 0}.progress div{height:100%;background:var(--accent);width:0;transition:width .2s}.meta{display:flex;justify-content:space-between;gap:10px;color:var(--muted);font-size:.92rem;flex-wrap:wrap}.topic{display:inline-block;color:#0b1220;background:var(--accent2);font-size:.78rem;font-weight:800;padding:4px 9px;border-radius:20px;margin-bottom:10px}.qtitle{font-size:1.25rem;font-weight:800;margin:8px 0 18px}.option{display:flex;gap:11px;align-items:flex-start;padding:13px;border:1px solid var(--line);border-radius:12px;margin:9px 0;background:#0d1728;cursor:pointer}.option:hover{border-color:var(--accent2)}.option input{width:auto;margin-top:5px;accent-color:var(--accent)}.feedback{padding:14px;border-radius:12px;margin-top:14px}.correct{background:#10372f;border:1px solid #28745f}.incorrect{background:#3a2027;border:1px solid #844351}.muted{color:var(--muted)}.statgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px}.stat{padding:15px;border-radius:13px;background:var(--panel2);border:1px solid var(--line)}.stat b{display:block;font-size:1.55rem}.small{font-size:.88rem;color:var(--muted)}table{width:100%;border-collapse:collapse;margin-top:12px}th,td{text-align:left;padding:10px;border-bottom:1px solid var(--line)}th{color:var(--accent)}.notice{border-left:4px solid var(--warn);padding:10px 13px;background:#292718;color:#f9e9b0;border-radius:7px}.pill{display:inline-block;border:1px solid var(--line);padding:4px 9px;border-radius:99px;color:var(--muted);font-size:.85rem}
+@media(max-width:600px){.wrap{padding:12px}.panel{padding:15px}.hero{padding:21px 17px}.row button{width:100%}}
+@media print{body{background:white;color:#111}.hero,.panel{background:white;color:#111;border:1px solid #aaa}.muted,.small{color:#444}button{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+<div class="kicker">Revisão geral • Ensino Médio</div>
+<h1>Desafio de Física</h1>
+<p><strong>Professor Rafael Lopes</strong></p>
+<p>3ª série do Ensino Médio · 40 questões · duas rodadas com intervalo · estilo ENEM</p>
+</header>
+
+<section id="start" class="panel">
+<h2>Identificação do estudante</h2>
+<p class="muted">Preencha os dados antes de começar. A Rodada 1 tem 20 questões; ao final, o sistema registra o resultado e libera a pausa. Depois do intervalo, inicie a Rodada 2.</p>
+<div class="row">
+<div><label for="student">Nome completo</label><input id="student" autocomplete="name" placeholder="Digite seu nome" required></div>
+<div><label for="classroom">Turma</label><input id="classroom" placeholder="Ex.: 3ª série A"></div>
+</div>
+<div class="row" style="margin-top:16px"><button onclick="begin()">Começar Rodada 1</button><button class="secondary" onclick="showTeacher()">Painel do professor</button></div>
+<p class="small">Cada questão vale 0,5 ponto na rodada. A nota de cada rodada vai de 0 a 10. A nota geral também vai de 0 a 10, considerando as 40 questões.</p>
+</section>
+
+<section id="quiz" class="panel hidden">
+<div class="meta"><span id="roundLabel">Rodada 1</span><span id="timer">Tempo: 00:00</span></div>
+<div class="progress"><div id="progressbar"></div></div>
+<div class="meta"><span id="qCount">Questão 1 de 20</span><span id="answered">Respondidas: 0/20</span></div>
+<div style="margin-top:16px"><span class="topic" id="topic"></span><div class="qtitle" id="question"></div><div id="options"></div></div>
+<div id="feedback" class="feedback hidden"></div>
+<div class="row" style="margin-top:18px"><button class="secondary" id="prevBtn" onclick="prevQuestion()">Anterior</button><button id="checkBtn" onclick="checkAnswer()">Confirmar resposta</button><button id="nextBtn" onclick="nextQuestion()" class="hidden">Próxima questão</button></div>
+<p class="small">Depois de confirmar, a resposta fica registrada e você verá uma explicação. Responda com atenção.</p>
+</section>
+
+<section id="break" class="panel hidden">
+<div class="kicker">Intervalo</div><h2>Rodada 1 concluída!</h2>
+<div id="round1Summary"></div>
+<p>O resultado da primeira rodada foi salvo neste dispositivo. Aproveite o intervalo; quando a turma estiver pronta, inicie a segunda rodada.</p>
+<button onclick="beginRound2()">Iniciar Rodada 2</button>
+</section>
+
+<section id="results" class="panel hidden">
+<div class="kicker">Desafio concluído</div><h2>Resultado final</h2>
+<div id="finalSummary"></div>
+<div class="row" style="margin-top:18px"><button onclick="exportResults()">Exportar resultado CSV</button><button class="secondary" onclick="window.print()">Imprimir / salvar PDF</button><button class="secondary" onclick="showTeacher()">Painel do professor</button></div>
+<p class="notice" style="margin-top:16px">Importante: este arquivo registra resultados apenas no dispositivo/navegador utilizado. Para reunir automaticamente as notas de vários estudantes em um painel central, é necessário conectar o quiz a uma planilha ou serviço on-line.</p>
+<button class="secondary" onclick="location.reload()">Novo estudante neste dispositivo</button>
+</section>
+
+<section id="teacher" class="panel hidden">
+<h2>Painel do professor</h2>
+<p class="muted">Exibe os resultados guardados localmente neste navegador. Os resultados de outros celulares não aparecem aqui automaticamente.</p>
+<div class="row"><button onclick="exportAll()">Exportar todos os registros (CSV)</button><button class="secondary" onclick="hideTeacher()">Voltar</button><button class="secondary" onclick="clearRecords()">Apagar registros locais</button></div>
+<div id="teacherRecords"></div>
+</section>
+<footer class="small" style="text-align:center;padding:18px">Desafio de Física · Revisão geral da 3ª série do Ensino Médio</footer>
+</div>
+<script>
+const rounds = [
+[
+{topic:"Mecânica",q:"Um carro percorre 150 km em 2,5 h, mantendo velocidade escalar média constante. Qual é essa velocidade?",o:["40 km/h","50 km/h","60 km/h","75 km/h"],a:2,e:"A velocidade média é Δs/Δt = 150/2,5 = 60 km/h."},
+{topic:"Mecânica",q:"Um objeto parte do repouso e atinge 20 m/s em 5 s, com aceleração constante. Qual é sua aceleração média?",o:["2 m/s²","4 m/s²","5 m/s²","10 m/s²"],a:1,e:"a = Δv/Δt = (20 − 0)/5 = 4 m/s²."},
+{topic:"Leis de Newton",q:"Uma força resultante de 18 N atua sobre um corpo de massa 6 kg. Qual é a aceleração?",o:["0,33 m/s²","3 m/s²","6 m/s²","108 m/s²"],a:1,e:"Pela segunda lei de Newton, a = F/m = 18/6 = 3 m/s²."},
+{topic:"Trabalho e energia",q:"Uma força constante de 30 N desloca uma caixa 4 m na mesma direção da força. Qual é o trabalho realizado?",o:["7,5 J","34 J","120 J","240 J"],a:2,e:"Como força e deslocamento têm a mesma direção, W = F·d = 30·4 = 120 J."},
+{topic:"Energia cinética",q:"Um corpo de 2 kg move-se a 6 m/s. Qual é sua energia cinética?",o:["12 J","18 J","36 J","72 J"],a:2,e:"Ec = mv²/2 = 2·36/2 = 36 J."},
+{topic:"Quantidade de movimento",q:"Um carrinho de 3 kg move-se a 4 m/s. Qual é o módulo de sua quantidade de movimento?",o:["0,75 kg·m/s","7 kg·m/s","12 kg·m/s","24 kg·m/s"],a:2,e:"A quantidade de movimento é p = mv = 3·4 = 12 kg·m/s."},
+{topic:"Gravitação",q:"Desprezando a resistência do ar, um objeto em queda livre próximo à superfície da Terra apresenta aceleração aproximadamente igual a:",o:["0 m/s²","4,9 m/s²","9,8 m/s² para baixo","9,8 m/s² para cima"],a:2,e:"A aceleração da gravidade próxima à superfície terrestre é aproximadamente 9,8 m/s², dirigida para baixo."},
+{topic:"Movimento circular",q:"Em um movimento circular uniforme, qual grandeza permanece constante?",o:["O vetor velocidade","A rapidez","A aceleração vetorial nula","A direção da velocidade"],a:1,e:"A rapidez é constante, mas a direção do vetor velocidade muda continuamente; por isso há aceleração centrípeta."},
+{topic:"Hidrostática",q:"Uma força de 200 N atua perpendicularmente sobre uma área de 0,5 m². Qual é a pressão média?",o:["100 Pa","200 Pa","400 Pa","1 000 Pa"],a:2,e:"P = F/A = 200/0,5 = 400 Pa."},
+{topic:"Empuxo",q:"Um objeto totalmente imerso em água recebe empuxo vertical para cima. O módulo do empuxo é igual ao peso:",o:["Do objeto, em qualquer situação","Da água deslocada","De toda a água do recipiente","Do recipiente com água"],a:1,e:"Pelo princípio de Arquimedes, o empuxo equivale ao peso do fluido deslocado."},
+{topic:"Termologia",q:"A temperatura de 27 °C corresponde aproximadamente a qual temperatura absoluta?",o:["246 K","273 K","300 K","310 K"],a:2,e:"T(K) ≈ θ(°C) + 273; portanto, 27 + 273 = 300 K."},
+{topic:"Calorimetria",q:"Quanto calor é necessário para aquecer 0,5 kg de água em 10 °C? Use c = 4 200 J/(kg·°C).",o:["2 100 J","4 200 J","21 000 J","42 000 J"],a:2,e:"Q = mcΔT = 0,5·4200·10 = 21 000 J."},
+{topic:"Transferência de calor",q:"O calor do Sol chega à Terra principalmente por:",o:["Condução","Convecção","Radiação","Contato direto"],a:2,e:"A radiação eletromagnética pode se propagar no vácuo, ao contrário da condução e da convecção."},
+{topic:"Termodinâmica",q:"Uma máquina térmica recebe 1 000 J de calor e realiza 300 J de trabalho por ciclo. Qual é seu rendimento?",o:["3%","30%","70%","300%"],a:1,e:"η = W/Qrecebido = 300/1000 = 0,30 = 30%."},
+{topic:"Ondulatória",q:"Uma onda tem frequência de 5 Hz e comprimento de onda de 2 m. Qual é sua velocidade de propagação?",o:["2,5 m/s","7 m/s","10 m/s","20 m/s"],a:2,e:"v = fλ = 5·2 = 10 m/s."},
+{topic:"Acústica",q:"Uma pessoa ouve um som mais agudo que outro. Em geral, o som mais agudo possui:",o:["Maior frequência","Maior intensidade obrigatoriamente","Menor velocidade no ar","Maior amplitude obrigatoriamente"],a:0,e:"A altura do som (grave ou agudo) está relacionada à frequência."},
+{topic:"Óptica",q:"Ao passar do ar para o vidro, um raio de luz incide obliquamente. Em condições usuais, a luz:",o:["Aumenta sua velocidade e afasta-se da normal","Diminui sua velocidade e aproxima-se da normal","Mantém sua velocidade e muda apenas a cor","Para de se propagar"],a:1,e:"O vidro tem índice de refração maior que o ar: a luz diminui sua velocidade e o raio refratado aproxima-se da normal."},
+{topic:"Espelhos",q:"Um objeto está diante de um espelho plano. A imagem formada é:",o:["Real e invertida verticalmente","Virtual, direita e do mesmo tamanho","Real e maior","Virtual e sempre menor"],a:1,e:"Espelhos planos formam imagens virtuais, direitas e de tamanho igual ao do objeto."},
+{topic:"Eletricidade",q:"Um resistor de 8 Ω é ligado a uma tensão de 24 V. Qual corrente elétrica o atravessa?",o:["0,33 A","3 A","16 A","192 A"],a:1,e:"Pela lei de Ohm, I = U/R = 24/8 = 3 A."},
+{topic:"Potência elétrica",q:"Um aparelho ligado a 120 V é percorrido por corrente de 2 A. Qual é sua potência elétrica?",o:["60 W","122 W","240 W","480 W"],a:2,e:"P = UI = 120·2 = 240 W."}
+],
+[
+{topic:"Consumo elétrico",q:"Um aparelho de 1 000 W funciona durante 3 h. Qual energia consome nesse intervalo?",o:["0,3 kWh","1 kWh","3 kWh","3 000 kWh"],a:2,e:"1 000 W = 1 kW; E = P·t = 1·3 = 3 kWh."},
+{topic:"Circuitos",q:"Dois resistores de 4 Ω e 6 Ω são ligados em série. Qual é a resistência equivalente?",o:["2,4 Ω","5 Ω","10 Ω","24 Ω"],a:2,e:"Em série, as resistências se somam: Req = 4 + 6 = 10 Ω."},
+{topic:"Circuitos",q:"Dois resistores de 6 Ω são ligados em paralelo a uma fonte ideal. A resistência equivalente é:",o:["3 Ω","6 Ω","12 Ω","36 Ω"],a:0,e:"Para dois resistores iguais em paralelo, Req = R/2 = 3 Ω."},
+{topic:"Magnetismo",q:"As linhas do campo magnético fora de um ímã convencional orientam-se:",o:["Do polo sul para o norte","Do polo norte para o sul","Em linhas retas paralelas sempre","Sem relação com os polos"],a:1,e:"Fora do ímã, as linhas de campo saem do polo norte magnético e entram no polo sul magnético."},
+{topic:"Indução eletromagnética",q:"Uma corrente induzida surge em uma espira quando:",o:["O fluxo magnético através dela varia","A espira permanece imóvel em campo constante, sem variação de fluxo","A resistência é infinita","A espira não está em um circuito"],a:0,e:"A lei de Faraday relaciona a força eletromotriz induzida à taxa de variação do fluxo magnético."},
+{topic:"Lei de Lenz",q:"A lei de Lenz determina que a corrente induzida tem sentido tal que seu campo magnético:",o:["Sempre aumenta o fluxo externo","Se opõe à variação do fluxo que a produziu","É sempre nulo","Aponta sempre para o norte geográfico"],a:1,e:"A corrente induzida produz efeitos que se opõem à variação do fluxo magnético responsável pela indução."},
+{topic:"Transformadores",q:"Um transformador ideal tem 100 espiras no primário e 500 no secundário. Se a tensão primária é 12 V, a tensão secundária é:",o:["2,4 V","12 V","60 V","600 V"],a:2,e:"Vs/Vp = Ns/Np = 500/100 = 5; logo Vs = 5·12 = 60 V."},
+{topic:"Eletrostática",q:"Dois corpos com cargas elétricas de mesmo sinal, mantidos próximos, exercem entre si forças:",o:["Atrativas","Repulsivas","Sempre nulas","Que dependem apenas da massa"],a:1,e:"Cargas elétricas de mesmo sinal se repelem; cargas de sinais opostos se atraem."},
+{topic:"Campo elétrico",q:"O campo elétrico em um ponto pode ser definido como:",o:["A força elétrica por unidade de carga de prova positiva","A energia térmica por unidade de massa","A corrente por unidade de tempo","A resistência por unidade de tensão"],a:0,e:"O campo elétrico é E = F/q para uma carga de prova positiva, no limite em que ela não altera a distribuição."},
+{topic:"Capacitores",q:"A função principal de um capacitor em um circuito é:",o:["Armazenar energia no campo elétrico","Transformar diretamente corrente contínua em mecânica","Produzir carga sem fonte","Eliminar toda resistência do circuito"],a:0,e:"O capacitor armazena cargas opostas em suas placas e energia no campo elétrico entre elas."},
+{topic:"Física Moderna",q:"No efeito fotoelétrico, aumentar a frequência da luz incidente acima da frequência de corte aumenta diretamente:",o:["A energia cinética máxima dos fotoelétrons","A carga elétrica do elétron","A velocidade da luz no vácuo","A função trabalho do metal"],a:0,e:"A energia cinética máxima é Kmax = hf − função trabalho; aumentando a frequência, aumenta a energia dos fótons."},
+{topic:"Fótons",q:"A energia de um fóton é diretamente proporcional à sua:",o:["Amplitude elétrica apenas","Frequência","Massa de repouso","Velocidade no vácuo ao quadrado"],a:1,e:"A energia do fóton é E = hf, sendo h a constante de Planck."},
+{topic:"Radioatividade",q:"Uma amostra radioativa tem meia-vida de 8 dias. Após 24 dias, que fração da quantidade inicial permanece?",o:["1/2","1/4","1/8","1/16"],a:2,e:"24 dias correspondem a três meias-vidas: resta (1/2)³ = 1/8 da quantidade inicial."},
+{topic:"Energia nuclear",q:"A energia liberada em processos de fissão nuclear está associada principalmente:",o:["À conversão de parte da massa em energia","À criação de energia sem qualquer transformação","À combustão química do núcleo","À quebra de ligações entre moléculas de água"],a:0,e:"A diferença de massa entre estados nucleares liga-se à energia pela relação E = mc²."},
+{topic:"Frequência e período",q:"Uma onda realiza 20 oscilações em 4 s. Qual é seu período?",o:["0,2 s","0,5 s","5 s","80 s"],a:1,e:"A frequência é f = 20/4 = 5 Hz; o período é T = 1/f = 0,2 s. Atenção: portanto, a alternativa correta é 0,2 s.",fix:0},
+{topic:"Reflexão",q:"Um raio de luz incide sobre um espelho plano com ângulo de incidência de 35° em relação à normal. O ângulo de reflexão é:",o:["17,5°","35°","55°","70°"],a:1,e:"A lei da reflexão afirma que o ângulo de reflexão é igual ao ângulo de incidência, ambos medidos em relação à normal."},
+{topic:"Lentes",q:"Uma lente convergente pode produzir imagem real de um objeto real quando o objeto está:",o:["Entre a lente e o foco","Exatamente no foco, com imagem real finita","A uma distância maior que a distância focal","Em qualquer posição, sem exceção"],a:2,e:"Para um objeto além do foco de uma lente convergente, os raios refratados podem convergir e formar imagem real."},
+{topic:"Impulso",q:"Uma força resultante média de 10 N atua durante 0,2 s. Qual é o módulo do impulso?",o:["0,02 N·s","2 N·s","10,2 N·s","50 N·s"],a:1,e:"O impulso é J = FΔt = 10·0,2 = 2 N·s."},
+{topic:"Equilíbrio",q:"Uma placa está em equilíbrio estático. Isso exige que:",o:["A força resultante seja zero e o torque resultante seja zero","A velocidade seja necessariamente alta","A energia cinética seja máxima","Haja sempre uma única força atuando"],a:0,e:"No equilíbrio estático, a soma das forças e a soma dos torques são nulas."},
+{topic:"Princípio de Pascal",q:"Em um elevador hidráulico ideal, a pressão aplicada a um fluido confinado:",o:["É transmitida integralmente a todos os pontos do fluido","Só se transmite para baixo","Diminui sempre a zero","É transmitida apenas ao pistão menor"],a:0,e:"O princípio de Pascal afirma que uma variação de pressão aplicada a um fluido confinado é transmitida a todo o fluido e às paredes."}
+]
+];
+// Corrige automaticamente a chave do item cujo período foi calculado: T=0,2 s.
+rounds[1][14].a = 0;
+let round=0, idx=0, answers=[Array(20).fill(null),Array(20).fill(null)], confirmed=[Array(20).fill(false),Array(20).fill(false)];
+let startedAt=0, roundStartedAt=0, timerId=null, roundSeconds=[0,0], studentName="", classroom="";
+const $=id=>document.getElementById(id);
+function begin(){studentName=$("student").value.trim();classroom=$("classroom").value.trim();if(!studentName){alert("Digite o nome do estudante para começar.");return;} $("start").classList.add("hidden");round=0;idx=0;startedAt=Date.now();roundStartedAt=Date.now();$("quiz").classList.remove("hidden");startTimer();renderQuestion();}
+function startTimer(){clearInterval(timerId);timerId=setInterval(()=>{const elapsed=roundSeconds[round]+Math.floor((Date.now()-roundStartedAt)/1000);$("timer").textContent="Tempo: "+fmt(elapsed);},1000);}
+function fmt(s){return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0");}
+function renderQuestion(){const qs=rounds[round],q=qs[idx];$("roundLabel").textContent=`Rodada ${round+1} · ${round===0?"Antes do intervalo":"Depois do intervalo"}`;$("qCount").textContent=`Questão ${idx+1} de 20`;$("answered").textContent=`Respondidas: ${confirmed[round].filter(Boolean).length}/20`;$("progressbar").style.width=((idx+1)/20*100)+"%";$("topic").textContent=q.topic;$("question").textContent=q.q;$("options").innerHTML="";q.o.forEach((opt,i)=>{const lab=document.createElement("label");lab.className="option";const radio=document.createElement("input");radio.type="radio";radio.name="answer";radio.value=i;radio.checked=answers[round][idx]===i;radio.disabled=confirmed[round][idx];radio.addEventListener("change",()=>answers[round][idx]=i);lab.append(radio,document.createTextNode(opt));$("options").append(lab);});$("feedback").classList.add("hidden");$("feedback").textContent="";$("prevBtn").disabled=idx===0;$("checkBtn").classList.toggle("hidden",confirmed[round][idx]);$("nextBtn").classList.toggle("hidden",!confirmed[round][idx]);$("nextBtn").textContent=idx===19?(round===0?"Finalizar rodada e ir ao intervalo":"Concluir desafio"):"Próxima questão";if(confirmed[round][idx])showFeedback();}
+function showFeedback(){const q=rounds[round][idx],ok=answers[round][idx]===q.a;$("feedback").className="feedback "+(ok?"correct":"incorrect");$("feedback").textContent=(ok?"Resposta correta. ":"Resposta incorreta. A resposta correta é: ")+q.o[q.a]+". "+q.e;}
+function checkAnswer(){if(answers[round][idx]===null){alert("Selecione uma alternativa antes de confirmar.");return;}confirmed[round][idx]=true;renderQuestion();}
+function nextQuestion(){if(idx<19){idx++;renderQuestion();return;}roundSeconds[round]+=Math.floor((Date.now()-roundStartedAt)/1000);clearInterval(timerId);if(round===0){saveRound1();$("quiz").classList.add("hidden");$("break").classList.remove("hidden");}else{finishQuiz();}}
+function prevQuestion(){if(idx>0){idx--;renderQuestion();}}
+function score(r){return answers[r].reduce((n,a,i)=>n+(a===rounds[r][i].a?1:0),0);}
+function saveRound1(){$("round1Summary").innerHTML=`<div class="statgrid"><div class="stat"><span>Acertos</span><b>${score(0)}/20</b></div><div class="stat"><span>Nota da rodada</span><b>${(score(0)*0.5).toFixed(1).replace(".",",")}/10</b></div><div class="stat"><span>Tempo</span><b>${fmt(roundSeconds[0])}</b></div></div>`;saveLocal(false);}
+function beginRound2(){$("break").classList.add("hidden");round=1;idx=0;roundStartedAt=Date.now();$("quiz").classList.remove("hidden");startTimer();renderQuestion();}
+function finishQuiz(){saveLocal(true);$("quiz").classList.add("hidden");$("results").classList.remove("hidden");const total=score(0)+score(1);$("finalSummary").innerHTML=`<div class="statgrid"><div class="stat"><span>Rodada 1</span><b>${score(0)}/20</b><span class="small">Nota ${(score(0)*.5).toFixed(1).replace(".",",")}/10</span></div><div class="stat"><span>Rodada 2</span><b>${score(1)}/20</b><span class="small">Nota ${(score(1)*.5).toFixed(1).replace(".",",")}/10</span></div><div class="stat"><span>Total de acertos</span><b>${total}/40</b></div><div class="stat"><span>Nota geral</span><b>${(total*.25).toFixed(2).replace(".",",")}/10</b></div><div class="stat"><span>Tempo total</span><b>${fmt(roundSeconds[0]+roundSeconds[1])}</b></div></div><h3>Revisão por conteúdo</h3>${topicSummary()}`;}
+function topicSummary(){let m={};rounds.flat().forEach((q,i)=>{let r=i<20?0:1;let k=q.topic;m[k]??={n:0,c:0};m[k].n++;if(answers[r][i%20]===q.a)m[k].c++;});return "<table><thead><tr><th>Conteúdo</th><th>Acertos</th></tr></thead><tbody>"+Object.entries(m).map(([k,v])=>`<tr><td>${k}</td><td>${v.c}/${v.n}</td></tr>`).join("")+"</tbody></table>";}
+function resultObj(){return {nome:studentName,turma:classroom,data:new Date().toLocaleString("pt-BR"),rodada1:score(0),nota1:(score(0)*.5).toFixed(1),rodada2:score(1),nota2:(score(1)*.5).toFixed(1),acertos:score(0)+score(1),notaGeral:((score(0)+score(1))*.25).toFixed(2),tempoSegundos:roundSeconds[0]+roundSeconds[1]};}
+function saveLocal(final){try{let list=JSON.parse(localStorage.getItem("fisica3_records")||"[]");let obj=resultObj();let key=studentName+"|"+classroom+"|"+new Date().toDateString();let existing=list.findIndex(x=>x.key===key);obj.key=key;obj.final=final;if(existing>=0)list[existing]=obj;else list.push(obj);localStorage.setItem("fisica3_records",JSON.stringify(list));}catch(e){}}
+function exportResults(){downloadCSV([resultObj()],"resultado_fisica_"+safeName(studentName)+".csv");}
+function exportAll(){let list=[];try{list=JSON.parse(localStorage.getItem("fisica3_records")||"[]")}catch(e){}if(!list.length){alert("Ainda não há resultados salvos neste navegador.");return;}downloadCSV(list,"registros_turma_fisica.csv");}
+function downloadCSV(rows,name){const keys=["nome","turma","data","rodada1","nota1","rodada2","nota2","acertos","notaGeral","tempoSegundos"];const csv=[keys.join(";"),...rows.map(r=>keys.map(k=>'"'+String(r[k]??"").replaceAll('"','""')+'"').join(";"))].join("\r\n");const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8;"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;a.click();URL.revokeObjectURL(a.href);}
+function safeName(s){return s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-zA-Z0-9_-]/g,"_").slice(0,40)||"estudante";}
+function showTeacher(){$("start").classList.add("hidden");$("quiz").classList.add("hidden");$("break").classList.add("hidden");$("results").classList.add("hidden");$("teacher").classList.remove("hidden");let list=[];try{list=JSON.parse(localStorage.getItem("fisica3_records")||"[]")}catch(e){}list.sort((a,b)=>Number(b.notaGeral)-Number(a.notaGeral));$("teacherRecords").innerHTML=list.length?`<table><thead><tr><th>Estudante</th><th>Turma</th><th>Rodada 1</th><th>Rodada 2</th><th>Nota geral</th></tr></thead><tbody>${list.map(x=>`<tr><td>${esc(x.nome)}</td><td>${esc(x.turma)}</td><td>${x.nota1}</td><td>${x.nota2}</td><td><b>${x.notaGeral}</b></td></tr>`).join("")}</tbody></table>`:"<p>Nenhum registro local encontrado.</p>";}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function hideTeacher(){$("teacher").classList.add("hidden");$("start").classList.remove("hidden");}
+function clearRecords(){if(confirm("Tem certeza de que deseja apagar todos os registros locais deste navegador?")){localStorage.removeItem("fisica3_records");showTeacher();}}
+</script>
+</body>
+</html>
